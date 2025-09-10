@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dr Auto</title>
+
+  <!-- ✅ Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+
+  <!-- ✅ SEO & Social -->
+  <meta name="description" content="🚗 Dr Auto - كل حساباتي الرسمية فيسبوك، إنستغرام وواتساب في مكان واحد.">
+  <meta property="og:title" content="Dr Auto">
+  <meta property="og:description" content="كل حساباتي الرسمية في مكان واحد">
+  <meta property="og:image" content="garage-background.jpg">
+  <meta property="og:type" content="website">
+
+  <style>
+    body {
+      font-family: 'Tajawal', sans-serif;
+      text-align: center;
+      margin: 0;
+      padding: 0;
+      direction: rtl;
+      color: #fff;
+      background: url("garage-background.jpg") no-repeat center center fixed;
+      background-size: cover;
+    }
+
+    .overlay {
+      background: rgba(0, 0, 0, 0.55);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      animation: fadeIn 1.2s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    h1 {
+      font-size: 3rem;
+      font-weight: 900;
+      color: #4facfe;
+      text-shadow: 0 0 15px rgba(0,0,0,0.9);
+      margin-bottom: 15px;
+    }
+
+    p {
+      font-size: 1.2rem;
+      margin-bottom: 30px;
+      color: #f0f0f0;
+    }
+
+    .links {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      width: 100%;
+      max-width: 320px;
+    }
+
+    .links a {
+      text-decoration: none;
+      background: linear-gradient(45deg, #4facfe, #00f2fe);
+      color: #fff;
+      padding: 14px;
+      border-radius: 12px;
+      font-size: 1.2rem;
+      font-weight: bold;
+      transition: all 0.3s ease;
+      box-shadow: 0 6px 15px rgba(0,0,0,0.35);
+    }
+
+    .links a:hover {
+      transform: translateY(-3px) scale(1.05);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    }
+
+    #qrcode {
+      margin-top: 50px;
+      background: linear-gradient(135deg, #4facfe, #00f2fe);
+      padding: 15px;
+      border-radius: 15px;
+      display: inline-block;
+    }
+
+    /* 📱 Responsive */
+    @media (max-width: 600px) {
+      h1 { font-size: 2rem; }
+      p { font-size: 1rem; }
+      .links a {
+        font-size: 1rem;
+        padding: 12px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="overlay">
+    <h1>🚗 Dr Auto</h1>
+    <p>كل حساباتي الرسمية في مكان واحد</p>
+
+    <div class="links">
+      <a href="https://www.facebook.com/share/18vZKreeuD/?mibextid=wwXIfr" target="_blank">📘 فيسبوك</a>
+      <a href="https://www.instagram.com/dr_____auto" target="_blank">📸 إنستغرام</a>
+      <a href="https://wa.me/21621069001" target="_blank">💬 واتساب</a>
+    </div>
+
+    <div id="qrcode"></div>
+  </div>
+
+  <!-- مكتبة QR -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script>
+    const currentUrl = window.location.href;
+    const qrDiv = document.getElementById("qrcode");
+    const qr = new QRCode(qrDiv, {
+      text: currentUrl,
+      width: 180,
+      height: 180,
+      colorDark : "#000000",
+      colorLight : "#ffffff00"
+    });
+
+    // 🎨 Gradient + Logo
+    setTimeout(() => {
+      const canvas = qrDiv.querySelector("canvas");
+      if (canvas) {
+        const ctx = canvas.getContext("2d");
+        const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+
+        const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+        gradient.addColorStop(0, "#4facfe");
+        gradient.addColorStop(1, "#00f2fe");
+
+        const gradCanvas = document.createElement("canvas");
+        gradCanvas.width = canvas.width;
+        gradCanvas.height = canvas.height;
+        const gctx = gradCanvas.getContext("2d");
+        gctx.fillStyle = gradient;
+        gctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        const gradData = gctx.getImageData(0, 0, canvas.width, canvas.height);
+
+        for (let i = 0; i < imgData.data.length; i += 4) {
+          if (imgData.data[i] < 128) {
+            imgData.data[i]     = gradData.data[i];
+            imgData.data[i + 1] = gradData.data[i + 1];
+            imgData.data[i + 2] = gradData.data[i + 2];
+            imgData.data[i + 3] = 255;
+          } else {
+            imgData.data[i + 3] = 0;
+          }
+        }
+        ctx.putImageData(imgData, 0, 0);
+
+        // 🖼️ إدراج Logo وسط QR
+        const logo = new Image();
+        logo.src = "logo.png"; // 🔄 بدّل بالصورة متاعك
+        logo.onload = () => {
+          const size = canvas.width * 0.25;
+          const x = (canvas.width - size) / 2;
+          const y = (canvas.height - size) / 2;
+          ctx.drawImage(logo, x, y, size, size);
+        };
+      }
+    }, 150);
+  </script>
+</body>
+</html>
